@@ -64,7 +64,12 @@
     "typescript": "^5.9.3",
     "wrangler": "^4.83.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@sovereignbase/bytecodec": "^1.6.1",
+    "@sovereignbase/convergent-replicated-list": "^1.0.7",
+    "@sovereignbase/cryptosuite": "^2.2.0",
+    "json-canonicalize": "^2.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sovereignbase/package-name.git"
