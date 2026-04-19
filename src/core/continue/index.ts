@@ -30,6 +30,7 @@ export async function __continue(
   const claim: VerifiableContinuityStateEntry['claim'] = {
     keyId,
     verifyKey: newKeypair.verifyKey,
+    notBefore: Date.now(),
   }
 
   const claimBytes = Bytes.fromString(canonicalize(claim))
