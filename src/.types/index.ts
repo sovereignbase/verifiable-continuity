@@ -5,22 +5,34 @@ import type {
   CRListDelta,
 } from '@sovereignbase/convergent-replicated-list'
 
-export type ContinuityClaim = {
+export type ContinuityState = {
   keyId: Base64URLString
   verifyKey: VerifyKey
-  notBefore: number
+  since: number
 }
 
-export type VerifiableContinuityStateEntry = {
-  claim: ContinuityClaim
+export type VERCONStateEntry = {
+  state: ContinuityState
   proof: Base64URLString
 }
 
-export type VerifiableContinuityState =
-  CRListState<VerifiableContinuityStateEntry>
+export type VERCONState = CRListState<VERCONStateEntry>
 
-export type VerifiableContinuitySnapshot =
-  CRListSnapshot<VerifiableContinuityStateEntry>
+export type VERCONSnapshot = CRListSnapshot<VERCONStateEntry>
 
-export type VerifiableContinuityDelta =
-  CRListDelta<VerifiableContinuityStateEntry>
+export type VERCONDelta = CRListDelta<VERCONStateEntry>
+
+export type VERCONDataToBeSinged = {
+  kind: 'vcs'
+  asserts: unknown
+  assertedAt: number
+  verificationMethod: VERCONSnapshot
+}
+
+export type VERCONSignature = {
+  kind: 'vcs'
+  asserts: unknown
+  assertedAt: number
+  verificationMethod: VERCONSnapshot
+  proof: Base64URLString
+}

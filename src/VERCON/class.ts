@@ -2,28 +2,31 @@ import {
   __create,
   __delete,
   __merge,
+  __snapshot,
 } from '@sovereignbase/convergent-replicated-list'
 import type {
-  VerifiableContinuityState,
-  VerifiableContinuitySnapshot,
-  VerifiableContinuityDelta,
-  VerifiableContinuityStateEntry,
+  VERCONState,
+  VERCONSnapshot,
+  VERCONDelta,
+  VERCONStateEntry,
 } from '../.types/index.js'
 import { __continue } from '../core/continue/index.js'
 import { SignKey, VerifyKey } from '@sovereignbase/cryptosuite'
 
 export class VERCON {
-  declare private readonly state: VerifiableContinuityState
-  constructor(snapshot?: VerifiableContinuitySnapshot) {
+  declare private readonly state: VERCONState
+  constructor(snapshot?: VERCONSnapshot) {
     Object.defineProperties(this, {
       state: {
-        value: __create<VerifiableContinuityStateEntry>(snapshot),
+        value: __create<VERCONStateEntry>(snapshot),
         enumerable: false,
         configurable: false,
         writable: false,
       },
     })
   }
+
+  async sign() {}
 
   /**
    * Continues the protection of the current signing key in to the new signing key
@@ -39,13 +42,16 @@ export class VERCON {
    * !! CLAIMS SINGED WITH THE DROPPED KEYS BECOME UNVERIFIABLE AS WELL AS VERIFIERS WITH TRUSTING AN DROPPED KEY CANT VERIFY CONTINUITY!!
    * @param count
    */
-  drop(count: number): void {
+  erase(count: number): void {
     if (typeof count !== 'number') return
     void __delete(this.state, 0, count)
   }
 
-  merge(verconDelta: VerifiableContinuityDelta) {
+  merge(verconDelta: VERCONDelta) {
     void __merge(this.state, verconDelta)
+  }
+  snapshot(): VERCONSnapshot {
+    return __snapshot(this.state)
   }
 
   static async verify(trustedVerifyKey: VerifyKey) {}

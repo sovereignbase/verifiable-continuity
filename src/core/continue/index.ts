@@ -5,21 +5,18 @@ import {
   __update,
   type CRListState,
 } from '@sovereignbase/convergent-replicated-list'
-import type {
-  VerifiableContinuityState,
-  VerifiableContinuityStateEntry,
-} from '../../.types/index.js'
+import type { VERCONState, VERCONStateEntry } from '../../.types/index.js'
 import { canonicalize } from 'json-canonicalize'
 
 export async function __continue(
   currentSignKey: SignKey,
-  verconReplica: VerifiableContinuityState
+  verconReplica: VERCONState
 ): Promise<SignKey | false> {
   if (!verconReplica.cursor) return false
   while (verconReplica.cursor.next) {
     verconReplica.cursor = verconReplica.cursor.next
   }
-  const currentVerifyKey = verconReplica.cursor.value.claim.verifyKey
+  const currentVerifyKey = verconReplica.cursor.value.state.verifyKey
 
   const newKeypair = await Cryptographic.digitalSignature.generateKeypair()
 
@@ -27,22 +24,22 @@ export async function __continue(
 
   const keyId = await Cryptographic.identifier.derive(newVerifyKeyBytes)
 
-  const claim: VerifiableContinuityStateEntry['claim'] = {
+  const state: VERCONStateEntry['state'] = {
     keyId,
     verifyKey: newKeypair.verifyKey,
-    notBefore: Date.now(),
+    since: Math.floor(Date.now() / 1000),
   }
 
-  const claimBytes = Bytes.fromString(canonicalize(claim))
+  const stateBytes = Bytes.fromString(canonicalize(state))
 
   const proofBytes = await Cryptographic.digitalSignature.sign(
     currentSignKey,
-    claimBytes
+    stateBytes
   )
 
   const continues = await Cryptographic.digitalSignature.verify(
     currentVerifyKey,
-    claimBytes,
+    stateBytes,
     proofBytes
   )
 
@@ -50,7 +47,7 @@ export async function __continue(
 
   const proof = Bytes.toBase64UrlString(proofBytes)
 
-  void __update(verconReplica.size, [{ claim, proof }], verconReplica, 'after')
+  void __update(verconReplica.size, [{ state, proof }], verconReplica, 'after')
 
   return newKeypair.signKey
 }
