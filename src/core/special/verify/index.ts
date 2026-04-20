@@ -14,7 +14,7 @@ import { Bytes } from '@sovereignbase/bytecodec'
 import { canonicalize } from 'json-canonicalize'
 import { safeStructuredClone } from '@sovereignbase/utils'
 
-export async function verify(
+export async function __verify(
   trustedKey: VerifyKey,
   verconSignature: VERCONSignature
 ): Promise<boolean> {

@@ -1,38 +1,49 @@
-import type { VerifyKey } from '@sovereignbase/cryptosuite'
+import type { SignKey, VerifyKey } from '@sovereignbase/cryptosuite'
 import type {
   CRListSnapshot,
   CRListState,
-  CRListDelta,
 } from '@sovereignbase/convergent-replicated-list'
+import type {
+  CRStructSnapshot,
+  CRStructState,
+} from '@sovereignbase/convergent-replicated-struct'
 
-export type ContinuityState = {
-  keyId: Base64URLString
+export type VerconAssertionMethod = {
+  keypairIdentifier: Base64URLString
+  signKey: SignKey
+}
+
+export type VerconVerificationMethod = {
+  keypairIdentifier: Base64URLString
   verifyKey: VerifyKey
   since: number
 }
 
-export type VERCONStateEntry = {
-  state: ContinuityState
+export type VerconVerificationMethodEntry = {
+  verificationMethod: VerconVerificationMethod
   proof: Base64URLString
 }
 
-export type VERCONState = CRListState<VERCONStateEntry>
-
-export type VERCONSnapshot = CRListSnapshot<VERCONStateEntry>
-
-export type VERCONDelta = CRListDelta<VERCONStateEntry>
-
-export type VERCONDataToBeSinged = {
-  kind: 'vcs'
-  asserts: unknown
-  assertedAt: number
-  verificationMethod: VERCONSnapshot
+export type VerconState = {
+  assertionMethod: CRStructState<VerconAssertionMethod>
+  verificationMethods: CRListState<VerconVerificationMethodEntry>
 }
 
-export type VERCONSignature = {
+export type VerconSnapshot = {
+  assertionMethod: CRStructSnapshot<VerconAssertionMethod>
+  verificationMethods: CRListSnapshot<VerconVerificationMethodEntry>
+}
+
+export type VerconDelta = Partial<VerconSnapshot>
+
+export type VerconDataToBeSigned = {
   kind: 'vcs'
   asserts: unknown
   assertedAt: number
-  verificationMethod: VERCONSnapshot
+  keypairIdentifier: VerconAssertionMethod['keypairIdentifier']
+  verificationMethods: VerconSnapshot['verificationMethods']
+}
+
+export type VerconSignature = VerconDataToBeSigned & {
   proof: Base64URLString
 }

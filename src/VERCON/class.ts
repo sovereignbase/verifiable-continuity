@@ -5,20 +5,21 @@ import {
   __snapshot,
 } from '@sovereignbase/convergent-replicated-list'
 import type {
-  VERCONState,
-  VERCONSnapshot,
-  VERCONDelta,
-  VERCONStateEntry,
+  VerconState,
+  VerconSnapshot,
+  VerconDelta,
+  VerconStateEntry,
 } from '../.types/index.js'
-import { __continue } from '../core/continue/index.js'
+import { __continue } from '../core/special/continue/index.js'
 import { SignKey, VerifyKey } from '@sovereignbase/cryptosuite'
+import { __assert } from '../core/special/assert/index.js'
 
-export class VERCON {
-  declare private readonly state: VERCONState
-  constructor(snapshot?: VERCONSnapshot) {
+export class Vercon {
+  declare private readonly state: VerconState
+  constructor(snapshot?: VerconSnapshot) {
     Object.defineProperties(this, {
       state: {
-        value: __create<VERCONStateEntry>(snapshot),
+        value: __create<VerconStateEntry>(snapshot),
         enumerable: false,
         configurable: false,
         writable: false,
@@ -26,7 +27,9 @@ export class VERCON {
     })
   }
 
-  async sign() {}
+  async assert(claims: unknown) {
+    return __assert(claims)
+  }
 
   /**
    * Continues the protection of the current signing key in to the new signing key
@@ -47,10 +50,10 @@ export class VERCON {
     void __delete(this.state, 0, count)
   }
 
-  merge(verconDelta: VERCONDelta) {
-    void __merge(this.state, verconDelta)
+  merge(VerconDelta: VerconDelta) {
+    void __merge(this.state, VerconDelta)
   }
-  snapshot(): VERCONSnapshot {
+  snapshot(): VerconSnapshot {
     return __snapshot(this.state)
   }
 

@@ -5,12 +5,12 @@ import {
   __update,
   type CRListState,
 } from '@sovereignbase/convergent-replicated-list'
-import type { VERCONState, VERCONStateEntry } from '../../.types/index.js'
+import type { VerconState, VerconStateEntry } from '../../../.types/index.js'
 import { canonicalize } from 'json-canonicalize'
 
 export async function __continue(
   currentSignKey: SignKey,
-  verconReplica: VERCONState
+  verconReplica: VerconState
 ): Promise<SignKey | false> {
   if (!verconReplica.cursor) return false
   while (verconReplica.cursor.next) {
